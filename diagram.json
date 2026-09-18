@@ -3,9 +3,27 @@
   "author": "Anonymous maker",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 58.2, "left": -0.6, "attrs": {} },
-    { "type": "wokwi-led", "id": "led1", "top": -138, "left": 3.8, "attrs": { "color": "cyan" } },
-    { "type": "wokwi-relay-module", "id": "relay1", "top": -67, "left": 96, "attrs": {} },
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 58.2,
+      "left": -0.6,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -138,
+      "left": 3.8,
+      "attrs": { "color": "cyan" }
+    },
+    {
+      "type": "wokwi-relay-module",
+      "id": "relay1",
+      "top": -67,
+      "left": 96,
+      "attrs": {}
+    },
     {
       "type": "wokwi-resistor",
       "id": "r1",
@@ -14,19 +32,25 @@
       "rotate": 180,
       "attrs": { "value": "220" }
     },
-    { "type": "wokwi-potentiometer", "id": "pot1", "top": -68.5, "left": 374.2, "attrs": {} }
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot1",
+      "top": -68.5,
+      "left": 374.2,
+      "attrs": {}
+    }
   ],
   "connections": [
-    [ "relay1:IN", "esp:D18", "green", [ "h0" ] ],
-    [ "relay1:COM", "esp:3V3", "blue", [ "h0" ] ],
-    [ "relay1:NO", "r1:1", "green", [ "h68.4", "v-88.2" ] ],
-    [ "led1:A", "r1:2", "green", [ "v0" ] ],
-    [ "led1:C", "esp:GND.2", "green", [ "v134.4", "h96.4" ] ],
-    [ "relay1:VCC", "esp:3V3", "red", [ "h-38.4", "v9.6" ] ],
-    [ "relay1:GND", "esp:GND.1", "black", [ "h-19.2", "v57.2", "h38.4" ] ],
-    [ "pot1:VCC", "esp:3V3", "red", [ "v288", "h-260" ] ],
-    [ "pot1:GND", "esp:GND.1", "black", [ "v0", "h-288" ] ],
-    [ "esp:D34", "pot1:SIG", "green", [ "v28.7", "h167" ] ]
+    ["relay1:NO", "r1:1", "green", ["h68.4", "v-88.2"]],
+    ["led1:A", "r1:2", "green", ["v0"]],
+    ["pot1:VCC", "esp:3V3", "red", ["v288", "h-260"]],
+    ["pot1:GND", "esp:GND.1", "black", ["v163.2", "h0", "v38.4", "h-278.4"]],
+    ["relay1:VCC", "esp:3V3", "red", ["h-28.8", "v76.8", "h124.8", "v220.8"]],
+    ["relay1:GND", "esp:GND.1", "black", ["h-19.2", "v86", "h67.2", "v124.8"]],
+    ["relay1:IN", "esp:D18", "green", ["h-9.6", "v38.2", "h86.4", "v124.8"]],
+    ["pot1:SIG", "esp:D34", "green", ["v172.8", "h-298", "v9.6"]],
+    ["relay1:COM", "esp:3V3", "green", ["h58.8", "v161.8"]],
+    ["led1:C", "esp:GND.1", "green", ["v134.4", "h307.6", "v182.4"]]
   ],
   "dependencies": {}
 }

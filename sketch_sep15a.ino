@@ -1,39 +1,30 @@
 /*
-  Riego automático por umbral — Arduino Nano
-  -------------------------------------------
-  Fase 2: la bomba ya no depende de comandos Serial, decide sola según
-  la lectura del sensor. Usa DOS umbrales (histéresis) en vez de uno solo,
-  para que no esté encendiendo y apagando sin parar cuando el valor está
-  justo en el límite.
+  Riego automático — versión ESP32 (prueba en Wokwi)
+  -----------------------------------------------------
+  Misma lógica que riego_automatico.ino del Nano, adaptada a los pines
+  del diagrama ESP32: relé en D18, sensor/potenciómetro en D34.
 
-  IMPORTANTE: los valores de UMBRAL_SECO / UMBRAL_HUMEDO de abajo son
-  arbitrarios, puestos solo para que el demo funcione con el potenciómetro
-  de Wokwi (rango 0-1023 completo). Con tu sensor real y sustrato real,
-  cambia estos dos números por los que hayas anotado en tu calibración
-  (el valor "seco" y el valor "recién regado" que ya sabes cómo sacar).
+  IMPORTANTE: el ADC del ESP32 es de 12 bits (0-4095) por defecto, distinto
+  a los 10 bits (0-1023) del Nano. Para no tener que recalcular tus umbrales,
+  forzamos analogReadResolution(10) en setup() — así el rango sigue siendo
+  0-1023, igual que en el Nano, y los mismos números de calibración sirven
+  en ambos.
 
-  Sigue habiendo comandos manuales por Serial:
-    ON   -> fuerza la bomba encendida (la lógica automática puede
-            volver a apagarla si detecta húmedo)
-    OFF  -> apaga la bomba manualmente ahora mismo (pero si sigue seco,
-            el riego automático puede volver a encenderla en el siguiente
-            ciclo — esto es intencional, es el modo automático mandando)
+  Comandos por Serial (115200 baudios, "Newline" activado):
+    ON / OFF -> igual que antes
 */
 
-const int PIN_RELE = 7;
-const int PIN_SENSOR = A0;
+const int PIN_RELE = 18;
+const int PIN_SENSOR = 34;
 
-const int RELE_ON = HIGH;   // confirmado en tu módulo real / Wokwi
+const int RELE_ON = HIGH;
 const int RELE_OFF = LOW;
 
-// --- Umbrales de humedad (con histéresis) ---
-// lectura ALTA = seco (menos conductividad) | lectura BAJA = húmedo
-const int UMBRAL_SECO = 650;    // por encima de esto -> enciende la bomba
-const int UMBRAL_HUMEDO = 400;  // por debajo de esto -> apaga la bomba
-// Entre 400 y 650 no hace nada — se queda como estaba (esa "zona muerta"
-// es la histéresis, evita parpadeos cuando el valor oscila cerca del límite)
+// --- Umbrales de humedad (con histéresis) — mismos valores que en el Nano ---
+const int UMBRAL_SECO = 650;
+const int UMBRAL_HUMEDO = 400;
 
-const unsigned long MAX_RIEGO_MS = 15000UL;      // corte de seguridad: 15 s
+const unsigned long MAX_RIEGO_MS = 15000UL;
 const unsigned long INTERVALO_LECTURA_MS = 500UL;
 
 bool bombaEncendida = false;
@@ -58,14 +49,14 @@ void apagarBomba(const char* motivo) {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  analogReadResolution(10);  // 0-1023, igual que el Nano
   pinMode(PIN_RELE, OUTPUT);
   apagarBomba("inicio");
-  Serial.println("Listo. Riego automático activo. Comandos manuales: ON / OFF");
+  Serial.println("Listo (ESP32). Riego automático activo. Comandos: ON / OFF");
 }
 
 void loop() {
-  // --- Comandos manuales (override puntual) ---
   if (Serial.available() > 0) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
@@ -74,12 +65,10 @@ void loop() {
     else if (cmd == "OFF" && bombaEncendida) apagarBomba("manual");
   }
 
-  // --- Corte de seguridad por tiempo máximo ---
   if (bombaEncendida && (millis() - tInicioRiego >= MAX_RIEGO_MS)) {
     apagarBomba("limite de tiempo");
   }
 
-  // --- Lectura del sensor + lógica automática ---
   if (millis() - tUltimaLectura >= INTERVALO_LECTURA_MS) {
     tUltimaLectura = millis();
     int lectura = analogRead(PIN_SENSOR);
