@@ -38,6 +38,13 @@
       "top": -68.5,
       "left": 374.2,
       "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -180,
+      "left": 200,
+      "attrs": {}
     }
   ],
   "connections": [
@@ -50,7 +57,10 @@
     ["relay1:IN", "esp:D18", "green", ["h-9.6", "v38.2", "h86.4", "v124.8"]],
     ["pot1:SIG", "esp:D34", "green", ["v172.8", "h-298", "v9.6"]],
     ["relay1:COM", "esp:3V3", "green", ["h58.8", "v161.8"]],
-    ["led1:C", "esp:GND.1", "green", ["v134.4", "h307.6", "v182.4"]]
+    ["led1:C", "esp:GND.1", "green", ["v134.4", "h307.6", "v182.4"]],
+    ["dht1:VCC", "esp:3V3", "red", ["h0"]],
+    ["dht1:GND", "esp:GND.2", "black", ["h0"]],
+    ["dht1:SDA", "esp:D4", "green", ["h0"]]
   ],
   "dependencies": {}
 }
